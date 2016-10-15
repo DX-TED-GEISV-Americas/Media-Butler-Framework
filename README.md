@@ -19,7 +19,7 @@ How to deploy Media Butler Framework
 * Azure App Service Plan, App Service and Web Job 
 
 ### Deploy Media Butler on a Web JOB
-Media Butler Framework (MBF) has a deployment **PowerShell script**. This script deploys MBF in Azure Web Job host always running. The script will create:
+Media Butler Framework (MBF) has a deployment [PowerShell script](https://raw.githubusercontent.com/DX-TED-GEISV-Americas/Media-Butler-Framework/master/Deployment/zeroTouchDeploy.ps1). This script deploys MBF in Azure Web Job host always running. The script will create:
 * MBF resource group
 * Staging storage account
 * Azure App Service Plan, App Service and Web Job
@@ -72,4 +72,3 @@ If you encounter any bugs with the tool please file an issue in the Issues secti
 License
 ------------
 MIT
-
