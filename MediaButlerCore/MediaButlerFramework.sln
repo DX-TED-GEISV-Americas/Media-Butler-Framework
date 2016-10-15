@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaButler.WorkflowStep", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaButler.Common", "MediaButler.Common\MediaButler.Common.csproj", "{4DCFBA42-A61E-42DC-9FC8-55FA920D5F0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaButler.BaseProcess", "MediaButler.BaseProcess\MediaButler.BaseProcess.csproj", "{9C95F03C-D005-47ED-8B4E-43420F7D9FC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaButlerWebJobHost", "MediaButlerWebJobHost\MediaButlerWebJobHost.csproj", "{F9BD1939-303C-43BB-B9A8-288B79802DD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +25,19 @@ Global
 		{4DCFBA42-A61E-42DC-9FC8-55FA920D5F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DCFBA42-A61E-42DC-9FC8-55FA920D5F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DCFBA42-A61E-42DC-9FC8-55FA920D5F0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C95F03C-D005-47ED-8B4E-43420F7D9FC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C95F03C-D005-47ED-8B4E-43420F7D9FC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C95F03C-D005-47ED-8B4E-43420F7D9FC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C95F03C-D005-47ED-8B4E-43420F7D9FC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9BD1939-303C-43BB-B9A8-288B79802DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9BD1939-303C-43BB-B9A8-288B79802DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9BD1939-303C-43BB-B9A8-288B79802DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9BD1939-303C-43BB-B9A8-288B79802DD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4
 	EndGlobalSection
 EndGlobal

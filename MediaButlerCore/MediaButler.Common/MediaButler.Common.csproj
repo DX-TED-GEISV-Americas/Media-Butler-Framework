@@ -72,13 +72,35 @@
     <Compile Include="Configuration\ButlerConfigurationEntity.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Configuration\DotControlConfigKeys.cs" />
+    <Compile Include="HostWatcher\MediaButlerWatcherHost.cs" />
     <Compile Include="Configuration\ProcessConfigKeys.cs" />
+    <Compile Include="HostWorkflow\ConfigurationData.cs" />
+    <Compile Include="HostWorkflow\MediaButlerHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceAccess\BlobManagerFactory.cs" />
+    <Compile Include="ResourceAccess\BlobStorageManager.cs" />
+    <Compile Include="ResourceAccess\IButlerStorageManager.cs" />
+    <Compile Include="ResourceAccess\IjsonKeyValue.cs" />
+    <Compile Include="ResourceAccess\jsonKeyValue.cs" />
+    <Compile Include="HostWatcher\BlobUtilities.cs" />
+    <Compile Include="HostWatcher\BlobWatcher.cs" />
+    <Compile Include="HostWatcher\ButlerJob.cs" />
+    <Compile Include="HostWatcher\JobManager.cs" />
+    <Compile Include="Workflow\ButlerProcessRequest.cs" />
+    <Compile Include="Workflow\ButlerRequest.cs" />
+    <Compile Include="Workflow\ButlerResponse.cs" />
+    <Compile Include="Workflow\ChainRequest.cs" />
+    <Compile Include="Workflow\ProcessHandler.cs" />
+    <Compile Include="Workflow\ProcessRequest.cs" />
+    <Compile Include="Workflow\ProcessSnapShot.cs" />
+    <Compile Include="Workflow\StepHandler.cs" />
+    <Compile Include="Workflow\stepTypeInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

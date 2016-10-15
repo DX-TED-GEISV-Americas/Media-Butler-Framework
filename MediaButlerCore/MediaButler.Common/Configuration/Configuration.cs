@@ -1,18 +1,14 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediaButler.Common.Configuration
 {
     /// <summary>
     /// MBF main configuration information
     /// </summary>
-    public class Configuration
+    public class MBFConfiguration
     {
         /// <summary>
         /// MBF configuration table name
@@ -32,7 +28,7 @@ namespace MediaButler.Common.Configuration
                 int pollingInterval = 5;
                 try
                 {
-                    pollingInterval = Convert.ToInt32(Configuration.GetConfigurationValue("FailedQueuePollingSeconds", "general"));
+                    pollingInterval = Convert.ToInt32(MBFConfiguration.GetConfigurationValue("FailedQueuePollingSeconds", "general"));
                 }
                 catch (Exception)
                 {
@@ -52,7 +48,7 @@ namespace MediaButler.Common.Configuration
                 int pollingInterval = 5;
                 try
                 {
-                    pollingInterval = Convert.ToInt32(Configuration.GetConfigurationValue("SuccessQueuePollingSeconds", "general"));
+                    pollingInterval = Convert.ToInt32(MBFConfiguration.GetConfigurationValue("SuccessQueuePollingSeconds", "general"));
                 }
                 catch (Exception)
                 {
@@ -72,7 +68,7 @@ namespace MediaButler.Common.Configuration
                 int pollingInterval = 5;
                 try
                 {
-                    pollingInterval = Convert.ToInt32(Configuration.GetConfigurationValue("BlobWatcherPollingSeconds", "general"));
+                    pollingInterval = Convert.ToInt32(MBFConfiguration.GetConfigurationValue("BlobWatcherPollingSeconds", "general"));
                 }
                 catch (Exception)
                 {
