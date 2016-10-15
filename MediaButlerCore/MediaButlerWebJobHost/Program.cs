@@ -15,7 +15,7 @@ namespace MediaButlerWebJobHost
     /// <summary>
     /// MBF Web Job HOST
     /// </summary>
-    class Program
+    public class Program
     {
         private static readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private static string ButlerWorkFlowManagerHostConfigKey = "MediaButler.Workflow.ButlerWorkFlowManagerWorkerRole";
@@ -82,6 +82,8 @@ namespace MediaButlerWebJobHost
             host.CallAsync(typeof(Program).GetMethod("RunMediaButlerWorkflow"));
             host.CallAsync(typeof(Program).GetMethod("RunMediaButlerWatcher"));
             host.RunAndBlock();
+
+
         }
     }
 }

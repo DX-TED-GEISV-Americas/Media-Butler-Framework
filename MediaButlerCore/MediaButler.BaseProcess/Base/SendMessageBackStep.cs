@@ -11,7 +11,7 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 using MediaButler.BaseProcess.AMSSupport;
 using System.Diagnostics;
 
-namespace MediaButler.BaseProcess.Base
+namespace MediaButler.BaseProcess
 {
     /// <summary>
     /// Step to create the message back to watchfolder process, 

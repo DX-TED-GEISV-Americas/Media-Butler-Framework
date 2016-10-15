@@ -21,14 +21,17 @@ namespace MediaButler.Common.Workflow
         /// Multi threading control lock
         /// </summary>
         private object myLock = new object();
+
         /// <summary>
         /// Internal # of process running
         /// </summary>
         private int currentProcessRunning = 0;
+        
         /// <summary>
         /// Process configuration storage connection
         /// </summary>
         private string myProcessConfigConn;
+
         /// <summary>
         /// get # current process running
         /// </summary>
@@ -42,26 +45,8 @@ namespace MediaButler.Common.Workflow
                 }
             }
         }
-        /// <summary>
-        /// Read process configuration
-        /// </summary>
-        /// <param name="processTypeId">process type ID</param>
-        /// <returns></returns>
-        private string ReadChainConfig(string processTypeId)
-        {
-            string jsonConfig;
-            jsonConfig = Configuration.MBFConfiguration.GetConfigurationValue(processTypeId + ".ChainConfig", this.GetType().FullName, myProcessConfigConn);
-            return jsonConfig;
-        }
-        /// <summary>
-        /// Read configuration from configration table
-        /// </summary>
-        /// <param name="Key"></param>
-        /// <returns></returns>
-        private string ReadConfig(string Key)
-        {
-            return Configuration.MBFConfiguration.GetConfigurationValue(Key, GetType().FullName, myProcessConfigConn);
-        }
+
+       
         /// <summary>
         /// Read configuration for configuration table but return "" if the row don't exist
         /// </summary>
@@ -72,15 +57,16 @@ namespace MediaButler.Common.Workflow
             string config = "";
             try
             {
-                config = Configuration.MBFConfiguration.GetConfigurationValue(Key, GetType().FullName, myProcessConfigConn);
+                config = Configuration.MBFConfiguration.GetConfigurationValue(Key, MediaButler.Common.Configuration.MBFConfiguration.ProcessHandlerConfigKey, myProcessConfigConn);
             }
             catch (Exception)
             {
                 string txt = string.Format("ProcessHandler try to read {0} but it is not in configuration table! at {1} ", Key, DateTime.Now.ToString());
-                Trace.TraceWarning(txt);
+                Trace.TraceInformation(txt);
             }
             return config;
         }
+        
         /// <summary>
         /// Load Process request base on configuration
         /// </summary>
@@ -91,21 +77,22 @@ namespace MediaButler.Common.Workflow
             //TODO> defaul request 
             ProcessRequest currentContext;
             stepTypeInfo x = null;
-            string jsonContext = ReadConfigOrDefault(processTypeId + ".Context");
+            string jsonContext = "";// = ReadConfigOrDefault(processTypeId + ".Context");
             if (string.IsNullOrEmpty(jsonContext))
             {
                 //default Context
-                jsonContext = "{\"AssemblyName\":\"MediaButler.BaseProcess.dll\",\"TypeName\":\"MediaButler.BaseProcess.ButlerProcessRequest\",\"ConfigKey\":\"\"}";
+                jsonContext = "{\"AssemblyName\":\"MediaButler.Common.dll\",\"TypeName\":\"MediaButler.Common.Workflow.ButlerProcessRequest\",\"ConfigKey\":\"\"}";
             }
             x = Newtonsoft.Json.JsonConvert.DeserializeObject<stepTypeInfo>(jsonContext);
             currentContext = (ProcessRequest)Activator.CreateComInstanceFrom(x.AssemblyName, x.TypeName).Unwrap();
             if ((x.ConfigKey != null) && (x.ConfigKey != ""))
             {
                 //loadXMLConfig Step
-                currentContext.ConfigData = this.ReadConfig(x.ConfigKey);
+                currentContext.ConfigData = ReadConfigOrDefault(x.ConfigKey);
             }
             return currentContext;
         }
+
         /// <summary>
         /// Build process step chaing base on process type configuration
         /// </summary>
@@ -119,12 +106,14 @@ namespace MediaButler.Common.Workflow
             string jsonTxt;
             try
             {
-                jsonTxt = ReadChainConfig(processTypeId);
+                jsonTxt = ReadConfigOrDefault(processTypeId + ".ChainConfig");
+                if (string.IsNullOrEmpty(jsonTxt))
+                    throw new Exception(processTypeId + " Not Found, check ButlerConfiguration Table");
             }
-            catch (Exception)
+            catch (Exception X)
             {
 
-                throw new Exception("[Error at BuildChain] Process " + processTypeId + " Not Found, check ButlerConfiguration Table");
+                throw new Exception("[Error at BuildChain] Process " + X.Message);
             }
 
             //Sensible config manually
@@ -191,6 +180,7 @@ namespace MediaButler.Common.Workflow
             }
             return auxSteps;
         }
+        
         /// <summary>
         /// Get proccess instance configuration storage connection
         /// </summary>
@@ -199,6 +189,7 @@ namespace MediaButler.Common.Workflow
         {
             myProcessConfigConn = ProcessConfigConn;
         }
+        
         /// <summary>
         /// Get process instance ID base on control file or message ID
         /// </summary>
@@ -221,6 +212,7 @@ namespace MediaButler.Common.Workflow
             }
             return xID;
         }
+       
         /// <summary>
         /// Load or create process request from snapshot table
         /// </summary>
@@ -252,6 +244,7 @@ namespace MediaButler.Common.Workflow
             }
             return currentRequest;
         }
+       
         /// <summary>
         /// Execute process
         /// </summary>
@@ -273,6 +266,7 @@ namespace MediaButler.Common.Workflow
                 List<StepHandler> mysteps = BuildChain(watcherRequest.WorkflowName);
 
                 myRequest = GetCurrentContext(watcherRequest.WorkflowName);
+                
                 myRequest.CurrentMessage = currentMessage;
                 myRequest.ProcessTypeId = watcherRequest.WorkflowName;
                 //ProcessInstanceId:
@@ -348,6 +342,7 @@ namespace MediaButler.Common.Workflow
 
             Trace.Flush();
         }
+        
         /// <summary>
         /// Execute process single or multi thread 
         /// </summary>
