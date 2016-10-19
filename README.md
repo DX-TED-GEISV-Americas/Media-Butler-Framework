@@ -9,7 +9,7 @@ MBF  is composed by 2 workers process: **Watcher** and **Workflow Manager** role
 
 **Workflow Manager** is Media Butler's core, it is the workflow coordinator. It receives jobs from ButlerSend queue, and process it following the process definition in **ButlerConfiguration** table. This role, follow and control the process and execute each step. When the process finish, it sends the notification as is configured.
 
-[image here]
+![Alt text](https://github.com/DX-TED-GEISV-Americas/Media-Butler-Framework/blob/master/docs/MediaButlerFrameworkOverview.JPG)
 
 How to deploy Media Butler Framework
 ------------------------------------
@@ -53,7 +53,8 @@ Stage Storage Account Key XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx==
 WebSite Plan Name mbfwebjobhostdeploytestXXXXX
 ```
 On Portal the resource group will see as this
-[image here]
+
+![Alt text](https://github.com/DX-TED-GEISV-Americas/Media-Butler-Framework/blob/master/docs/ResourceGroupComponents.JPG)
 
 The storage account inside the resorce group is **Staging storage** account and you will use to upload the new videos there.
 
