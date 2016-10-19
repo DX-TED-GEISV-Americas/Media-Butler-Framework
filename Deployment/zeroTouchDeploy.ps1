@@ -129,82 +129,76 @@ function createStageStorage()
 #3. Create Resource Group
 #check ResourceGroup
 
-$listrg=Get-AzureRmResourceGroup | Select-Object -Property ResourceGroupName
-$existRG=($listrg.ResourceGroupName -contains $appName)
+    $listrg=Get-AzureRmResourceGroup | Select-Object -Property ResourceGroupName
+    $existRG=($listrg.ResourceGroupName -contains $appName)
 
 #4. Resource group light traffic control 
-if (($overWriteRG -eq $false) -and ($existRG))
-{
-    $auxSwitch= $true
-}
-else
-{
-    $auxSwitch=$false
-}
-
-if ($auxSwitch)
-{
-    #not use the Existing RG
-     Write-Host "Resource Group allready exist"
-     Write-Host "finish Execution"
-}
-else
-{
-    #RG
-    if (-not $existRG)
+    if (($overWriteRG -eq $false) -and ($existRG))
     {
-        #RG Not exist
-        $myResourceGroup=New-AzureRmResourceGroup -Name $appName -Location $appRegion
+        $auxSwitch= $true
     }
     else
     {
-        #RG exist
-        $myResourceGroup=Get-AzureRmResourceGroup -Name $appName
+        $auxSwitch=$false
     }
 
-    #5. Create MBF Stage Storage Account
-    $rnd=Get-Random -Minimum 10 -Maximum 100
-    $MBFStageStorageName="mbfstage{0}{1}" -f $appName.ToLower(),$rnd
-    $MBFStorageConnString=$("DefaultEndpointsProtocol=https;AccountName=$MediaServiceStorageName;AccountKey=$MediaServiceStorageKey")
+    if ($auxSwitch)
+    {
+        #not use the Existing RG
+         Write-Host "Resource Group allready exist"
+         Write-Host "finish Execution"
+    }
+    else
+    {
+        #RG
+        if (-not $existRG)
+        {
+            #RG Not exist
+            $myResourceGroup=New-AzureRmResourceGroup -Name $appName -Location $appRegion
+        }
+        else
+        {
+            #RG exist
+            $myResourceGroup=Get-AzureRmResourceGroup -Name $appName
+        }
 
-    New-AzureRmStorageAccount -ResourceGroupName $myResourceGroup.ResourceGroupName -Name $MBFStageStorageName -Type Standard_LRS -Location $appRegion -Verbose
+ 
+        #5. Deploy MBF Host       
+        #$localTemplateFile=GetFileFromBlob -fileName 'TemplateFile.json' -fileURL $TemplateFileURI;
+        $localTemplateFile="C:\Users\jpgarcia\Source\Repos\Media-Butler-Framework\Deployment\mbfAzureDeploy.json"
+        $localTemplateParametersFile=GetFileFromBlob -fileName 'TemplateParametersFile.json' -fileURL $TemplateParametersFileURI;
 
-    #6. Setup MBF Stage Storage Connection
-    $sKey= Get-AzureRmStorageAccountKey -ResourceGroupName $myResourceGroup.ResourceGroupName  -StorageAccountName $MBFStageStorageName
-    $MBFStorageKey=$sKey.Item(0).value
-    $MBFStageStorageConnString=$("DefaultEndpointsProtocol=https;AccountName=$MBFStageStorageName;AccountKey=$MBFStorageKey")
-    $MBFStageStorageContext= New-AzureStorageContext -StorageAccountKey $MBFStorageKey -StorageAccountName $MBFStageStorageName
-
-    #7. Create MBF Stage Storage 
-    createStageStorage
-
-    #8. Create Process Sample
-    createProcessTestBasicProcess    
-
-    #9. Deploy MBF Host
-    $webSiteName="mbfwebjobhost{0}{1}" -f $appName.ToLower(),$rnd
-   
-    $localTemplateFile=GetFileFromBlob -fileName 'TemplateFile.json' -fileURL $TemplateFileURI;
-    $localTemplateParametersFile=GetFileFromBlob -fileName 'TemplateParametersFile.json' -fileURL $TemplateParametersFileURI;
-
-    $name=(((Get-Date).ToUniversalTime()).ToString('YYMMdd'))
-    $OptionalParameters = New-Object -TypeName Hashtable
-    $OptionalParameters.Add("MBFStageConn",  $MBFStageStorageConnString)
-    $OptionalParameters.Add("packageURI",  $packageURI)
-    $OptionalParameters.Add("farmplanName",  $webSiteName)
-    $OptionalParameters.Add("webjobURI",  $webjobURI)
-    $today=Get-Date -UFormat "%Y%m%d"
-    $OptionalParameters.Add("deployDate",$today)
+        $name=(((Get-Date).ToUniversalTime()).ToString('YYMMdd'))
+        $OptionalParameters = New-Object -TypeName Hashtable
+        $OptionalParameters.Add("packageURI",  $packageURI)
+        $OptionalParameters.Add("webjobURI",  $webjobURI)
+        $today=Get-Date -UFormat "%Y%m%d"
+        $OptionalParameters.Add("deployDate",$today)
        
-    New-AzureRmResourceGroupDeployment -Name $name -ResourceGroupName $myResourceGroup.ResourceGroupName -TemplateFile $localTemplateFile -TemplateParameterFile $localTemplateParametersFile @OptionalParameters -Force -Verbose
+        $deployOutPut = New-AzureRmResourceGroupDeployment -Name $name -ResourceGroupName $myResourceGroup.ResourceGroupName -TemplateFile $localTemplateFile -TemplateParameterFile $localTemplateParametersFile @OptionalParameters -Force -Verbose
 
-    Remove-Item -Path $localTemplateFile
-    Remove-Item -Path $localTemplateParametersFile
-    
+        #Remove-Item -Path $localTemplateFile
+        #Remove-Item -Path $localTemplateParametersFile
+        
+        #6. Create MBF Storage Tables, queues and basic configuration
+        $MBFStageStorageName=$deployOutPut.Outputs.mbfStagingStorageName.Value
+        $MBFStorageKey=$deployOutPut.Outputs.mbfStagingStorageKey.Value
+        $MBFStageStorageContext=New-AzureStorageContext -StorageAccountKey $MBFStorageKey -StorageAccountName $MBFStageStorageName
+        createStageStorage
+        createProcessTestBasicProcess
 
-    #10. ENd SCRIPT
-    Write-Host ("Stage Storaga Account Name {0}" -f $MBFStageStorageName )
-    Write-Host ("Stage Storage Account Key {0}" -f $MBFStorageKey)
-    Write-Host ("WebSite Plan Name {0}" -f $webSiteName)
+
+        #10. ENd SCRIPT
+        Write-Host ("Media Bulter Framework deployments objetcs:")
+        Write-Host ("1. Stage Storage Account Name {0}" -f $MBFStageStorageName )
+        Write-Host ("2. Stage Storage Account Key {0}" -f $MBFStorageKey)
+        Write-Host ("3. Web application name  {0}" -f $deployOutPut.Outputs.webAppXName.Value)
+        Write-Host ("3. Web plan name  {0}" -f $deployOutPut.Outputs.farmplanName.Value)
+
+
+        
+        $tagetURL="http://{0}.azurewebsites.net/" -f $deployOutPut.Outputs.webAppXName.Value
+
+        start $tagetURL
 
 }
