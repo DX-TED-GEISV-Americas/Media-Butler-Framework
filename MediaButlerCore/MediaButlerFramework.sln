@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Host Projects", "Host Projects", "{C8CEB15A-655B-4855-836A-CC32DEB3EE80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MBFWebApp", "MBFWebApp\MBFWebApp.csproj", "{A9BFECEF-FF4A-47D1-880E-5D3441F0AF1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,12 +44,17 @@ Global
 		{F9BD1939-303C-43BB-B9A8-288B79802DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9BD1939-303C-43BB-B9A8-288B79802DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9BD1939-303C-43BB-B9A8-288B79802DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9BFECEF-FF4A-47D1-880E-5D3441F0AF1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9BFECEF-FF4A-47D1-880E-5D3441F0AF1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9BFECEF-FF4A-47D1-880E-5D3441F0AF1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9BFECEF-FF4A-47D1-880E-5D3441F0AF1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F9BD1939-303C-43BB-B9A8-288B79802DD2} = {C8CEB15A-655B-4855-836A-CC32DEB3EE80}
+		{A9BFECEF-FF4A-47D1-880E-5D3441F0AF1F} = {C8CEB15A-655B-4855-836A-CC32DEB3EE80}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4

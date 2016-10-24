@@ -95,7 +95,7 @@ function createStageStorage()
     InsertButlerConfig -PartitionKey "general" -RowKey "BlobWatcherPollingSeconds" -value "5" -accountName $MBFStageStorageName -accountKey $MBFStorageKey -tableName "ButlerConfiguration"  
     InsertButlerConfig -PartitionKey "general" -RowKey "FailedQueuePollingSeconds" -value "5" -accountName $MBFStageStorageName -accountKey $MBFStorageKey -tableName "ButlerConfiguration"  
     InsertButlerConfig -PartitionKey "general" -RowKey "MediaServiceAccountName" -value $MediaServiceAccountName -accountName $MBFStageStorageName -accountKey $MBFStorageKey -tableName "ButlerConfiguration"  
-    InsertButlerConfig -PartitionKey "general" -RowKey "MediaStorageConn" -value $MBFStorageConnString -accountName $MBFStageStorageName -accountKey $MBFStorageKey -tableName "ButlerConfiguration"  
+    InsertButlerConfig -PartitionKey "general" -RowKey "MediaStorageConn" -value $MBFMediaServiceStorageConn -accountName $MBFStageStorageName -accountKey $MBFStorageKey -tableName "ButlerConfiguration"  
     InsertButlerConfig -PartitionKey "general" -RowKey "PrimaryMediaServiceAccessKey" -value $MediaServiceAccountKey -accountName $MBFStageStorageName -accountKey $MBFStorageKey -tableName "ButlerConfiguration"  
     InsertButlerConfig -PartitionKey "general" -RowKey "SuccessQueuePollingSeconds" -value "5" -accountName $MBFStageStorageName -accountKey $MBFStorageKey -tableName "ButlerConfiguration"  
     #Incoming Filter config Sample
@@ -104,9 +104,9 @@ function createStageStorage()
 
 # 0 Set Constants
     Set-Variable packageURI "http://aka.ms/mbfwebapp" -Option ReadOnly -Force
-    Set-Variable TemplateFileURI 'https://aka.ms/mbftemplatefileuri' -Option ReadOnly -Force
-    Set-Variable TemplateParametersFileURI 'http://aka.ms/mbfTemplateParametersFileURI' -Option ReadOnly -Force
-    Set-Variable webjobURI  "http://aka.ms/mbfhost" -Option ReadOnly -Force
+    Set-Variable TemplateFileURI 'https://raw.githubusercontent.com/DX-TED-GEISV-Americas/Media-Butler-Framework/master/Deployment/mbfAzureDeploy.json' -Option ReadOnly -Force
+    Set-Variable TemplateParametersFileURI 'https://raw.githubusercontent.com/DX-TED-GEISV-Americas/Media-Butler-Framework/master/Deployment/TemplateParametersFile.json' -Option ReadOnly -Force
+    Set-Variable webjobURI  "https://github.com/DX-TED-GEISV-Americas/Media-Butler-Framework/blob/master/Deployment/Defaultdeploy/MediaButlerWebJob.zip?raw=true" -Option ReadOnly -Force
 
 #1. Login With Organizational Account 
     IF([string]::IsNullOrEmpty($MyClearTextUsername)) 
@@ -164,10 +164,6 @@ function createStageStorage()
 
  
         #5. Deploy MBF Host       
-        #$localTemplateFile=GetFileFromBlob -fileName 'TemplateFile.json' -fileURL $TemplateFileURI;
-        $localTemplateFile="C:\Users\jpgarcia\Source\Repos\Media-Butler-Framework\Deployment\mbfAzureDeploy.json"
-        $localTemplateParametersFile=GetFileFromBlob -fileName 'TemplateParametersFile.json' -fileURL $TemplateParametersFileURI;
-
         $name=(((Get-Date).ToUniversalTime()).ToString('YYMMdd'))
         $OptionalParameters = New-Object -TypeName Hashtable
         $OptionalParameters.Add("packageURI",  $packageURI)
@@ -175,16 +171,18 @@ function createStageStorage()
         $today=Get-Date -UFormat "%Y%m%d"
         $OptionalParameters.Add("deployDate",$today)
        
-        $deployOutPut = New-AzureRmResourceGroupDeployment -Name $name -ResourceGroupName $myResourceGroup.ResourceGroupName -TemplateFile $localTemplateFile -TemplateParameterFile $localTemplateParametersFile @OptionalParameters -Force -Verbose
+        $deployOutPut = New-AzureRmResourceGroupDeployment -Name $name -ResourceGroupName $myResourceGroup.ResourceGroupName -TemplateUri $TemplateFileURI   @OptionalParameters -Force -Verbose
 
-        #Remove-Item -Path $localTemplateFile
-        #Remove-Item -Path $localTemplateParametersFile
-        
         #6. Create MBF Storage Tables, queues and basic configuration
         $MBFStageStorageName=$deployOutPut.Outputs.mbfStagingStorageName.Value
         $MBFStorageKey=$deployOutPut.Outputs.mbfStagingStorageKey.Value
         $MBFStageStorageContext=New-AzureStorageContext -StorageAccountKey $MBFStorageKey -StorageAccountName $MBFStageStorageName
+        $MBFMediaServiceStorageConn=$("DefaultEndpointsProtocol=https;AccountName=$MediaServiceStorageName;AccountKey=$MediaServiceStorageKey")
+        
+        #7. Create MBF Storage 
         createStageStorage
+
+        #8. Create Sample process on MBF configuration
         createProcessTestBasicProcess
 
 
